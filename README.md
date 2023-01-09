@@ -1,4 +1,4 @@
-# natours
+# Natours
 A web application for users to book tours and tour guides to manage their tours with JWT authentication and authorization.
 
 Users that sign up will have the following functionalities:
