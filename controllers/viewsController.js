@@ -19,8 +19,25 @@ exports.getOverview = async (req, res) => {
   }
 };
 
-exports.getTour = (req, res) => {
-  res.status(200).render('tour', {
-    title: 'The Forest Hiker Tour',
-  });
+exports.getTour = async (req, res) => {
+  try {
+    // 1) Get the data for the requested tour (including reviews and guides)
+    const tour = await Tour.findOne({ slug: req.params.slug }).populate(
+      'guides',
+      ['name', 'guide', 'email', 'role', 'photo']
+    );
+
+    // 2) Build template
+
+    // 3) Render template using data from 1)
+    res.status(200).render('tour', {
+      title: 'The Forest Hiker Tour',
+      tour,
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
 };
