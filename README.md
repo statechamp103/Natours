@@ -15,7 +15,7 @@ Tour guides will have the following authorization:
   - Delete a tour that's no longer available
  
  <h2>Database</h2>
-  The application uses a MongoDB database implemented with Mongoose.
+  The application uses a MongoDB database implemented with Mongoose Schemas/Models.
   
   <h2>Testing</h2>
   API testing and documentation done using Postman.
