@@ -19,20 +19,19 @@ block content
             .card__data
               svg.card__icon
                 use(xlink:href='img/icons.svg#icon-map-pin')
-              span Banff, Canada
+              span= tour.startLocation.description
             .card__data
               svg.card__icon
-                use(xlink:href='img/icons.svg#icon-calendar')
-              span April 2021
-              // span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+                use(xlink:href='img/icons.svg#icon-calendar')              
+              span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
             .card__data
               svg.card__icon
                 use(xlink:href='img/icons.svg#icon-flag')
-              span 3 stops
+              span= `${tour.locations.length} stops`
             .card__data
               svg.card__icon
                 use(xlink:href='img/icons.svg#icon-user')
-              span 25 people
+              span= `${tour.maxGroupSize} people`
 
           .card__footer
             p
