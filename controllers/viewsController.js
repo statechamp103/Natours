@@ -26,6 +26,10 @@ exports.getTour = async (req, res) => {
       'guides',
       ['name', 'guide', 'email', 'role', 'photo']
     );
+    // .populate({
+    //   path: 'reviews',
+    //   fields: 'review rating user',
+    // });
 
     // 2) Build template
 
