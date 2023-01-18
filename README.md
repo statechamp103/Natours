@@ -2,11 +2,12 @@
 A web application for users to book tours and tour guides to manage their tours with JWT authentication and authorization.
 
 Users that sign up will have the following functionalities:
+  - Full signup/login capabilites
+  - Password reset functionality
   - View a list of available tours with description, updated ratings, and reviews 
   - Leave personalized rating and review
   - Book tours using Stripe payment method
-  - View list of booked tours
-  - Full password reset functionality
+  - View list of booked tours  
 
 Tour guides will have the following authorization:
   - View a list of available tours
