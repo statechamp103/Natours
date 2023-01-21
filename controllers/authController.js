@@ -11,6 +11,30 @@ const signToken = (id) => {
   });
 };
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Remove password from the output
+  user.password = undefined;
+
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signup = async (req, res, next) => {
   try {
     const newUser = await User.create({
@@ -21,15 +45,7 @@ exports.signup = async (req, res, next) => {
       role: req.body.role,
     });
 
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-      status: 'success',
-      token,
-      data: {
-        user: newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   } catch (err) {
     res.status(400).json({
       status: 'fail',
@@ -54,12 +70,7 @@ exports.login = async (req, res, next) => {
     }
 
     // 3) If everything is ok, send token to client
-    const token = signToken(user._id);
-
-    res.status(200).json({
-      status: 'success',
-      token,
-    });
+    createSendToken(user, 200, res);
   } catch (err) {
     res.status(400).json({
       status: 'fail',
@@ -147,7 +158,7 @@ exports.forgotPassword = async (req, res, next) => {
       'host'
     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfrim to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
     try {
       await sendEmail({
         email: user.email,
@@ -202,11 +213,31 @@ exports.resetPassword = async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  const token = signToken(user._id);
-    
-    res.status(200).json({
-      status: 'success',
-      token,
-    });
+  createSendToken(user, 200, res);
+};
 
+exports.updatePassword = async (req, res, next) => {
+  try {
+    // 1) Get user from collection
+    const user = await User.findById(req.user.id).select('+password');
+
+    // 2) Check if POSTed current password is correct
+    if (!(await user.correctPassword(req.body.passwordCurrent))) {
+      return next(new AppError('Your current password is incorrect.', 401));
+    }
+
+    // 3) If so, update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+    // User.findByIdAndUpdate will NOT work as intended
+
+    // 4) Log user in, send JWT
+    createSendToken(user, 200, res);
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
