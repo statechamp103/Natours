@@ -1,5 +1,5 @@
 # Natours
-A web application for users to book tours and tour guides to manage their tours with JWT authentication and authorization.
+A web application for users to book tours and tour guides to manage their tours. Implemented with JWT authentication and authorization.
 <p float="left">
   <img height=175 width=300 src="/log_in.jpg" alt="Login Page">
   <img height=175 width=300 src="/all_tours.jpg" alt="Tours">
